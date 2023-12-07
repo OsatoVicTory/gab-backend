@@ -10,7 +10,7 @@ exports.fix = catchAsync(async (req, res) => {
     const statuses = await Status.find();
     for(let s of statuses) {
         const { public_id, _id, bg } = s._doc;
-        await deleteUploadedFile(public_id, bg ? 'text' : 'upload');
+        if(public_id) await deleteUploadedFile(public_id, 'upload');
         await Status.findByIdAndDelete(_id);
     }
     res.status(200).json({ message: 'Fixed successfully' });

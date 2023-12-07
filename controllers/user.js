@@ -121,11 +121,10 @@ exports.updateAccount = catchAsync(async(req, res) => {
         cloudinary_id = resp.cloudinary_id;
     }
     const data = {...req.body, img, cloudinary_id};
-    const User = await Users.findByIdAndUpdate(req.user.id, {...data}, { new: true });
-    res.status(200).json({
-        status: 'success',
-        user: User?._doc||User
-    })
+    const User = extractUserAccount(
+        await Users.findByIdAndUpdate(req.user.id, {...data}, { new: true })
+    );
+    res.status(200).json({ status: 'success', user: User });
 });
 
 exports.getUser = catchAsync(async (req, res) => {
@@ -144,7 +143,7 @@ exports.saveContact = catchAsync(async (req, res) => {
     let c = 0;
     for(; c < contacts.length; c++) {
         if(contacts[c].userId == userId) {
-            contacts[c] = req.body;
+            contacts[c] = { ...contacts[c], ...req.body };
             break;
         }
     }

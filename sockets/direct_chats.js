@@ -2,7 +2,6 @@ const chatsSockets = (io, socket, getUser) => {
     socket.on('sendMessage', (data) => {
         const user = getUser(data.message.receiverId);
         if(!user) return;
-        console.log(`sending message to ${user}`)
         io.to(user).emit('receiveMessage', {...data})
     });
 
@@ -25,20 +24,17 @@ const chatsSockets = (io, socket, getUser) => {
     socket.on('readMessage', (data) => {
         const user = getUser(data.senderId);
         if(!user) return;
-        console.log('read message');
         io.to(user).emit('readMessage', { ...data });
     });
 
     socket.on('typing', (data) => {
         const user = getUser(data.receiver);
         if(!user) return;
-        console.log(`typing=> ${data.receiver}`);
         io.to(user).emit('typing', { ...data });
     })
     socket.on('stoppedtyping', (data) => {
         const user = getUser(data.receiver);
         if(!user) return;
-        console.log('stoppedtyping');
         io.to(user).emit('stoppedtyping', { ...data });
     })
 

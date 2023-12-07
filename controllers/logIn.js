@@ -102,7 +102,7 @@ exports.logIn = catchAsync(async (req, res) => {
     const FULL_DAY = 86400000;
     const cur_time = (new Date()).getTime();
     const fetchPosts = async (data) => {
-        if(data.userId == id) return { statuses: [] };
+        if(data.userId == id || data.barred) return { statuses: [] };
         const userInfo = await fetchUserAccount(data.userId);
         userInfo.userName = data.userName;
         const statuses = await Status.find({ posterId: data.userId });

@@ -18,6 +18,7 @@ const Routes = require("./routes/index");
 const chatsSockets = require('./sockets/direct_chats');
 // const groupsSockets = require("./sockets/group_chats");
 const statusSockets = require("./sockets/status");
+// const callsSockets = require("./sockets/calls");
 
 connectMongo();
 
@@ -62,6 +63,7 @@ io.on('connection', (socket) => {
     chatsSockets(io, socket, getUser);
     // groupsSockets(io, socket, getUser);
     statusSockets(io, socket, getUser);
+    // callsSockets(io, socket, getUser);
 
     socket.on('updateAccount', (data) => {
         io.emit('updateAccount', { ...data });
