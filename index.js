@@ -8,7 +8,7 @@ const socket = require("socket.io");
 const connectMongo = require('./startup/mongoose');
 
 require("dotenv").config();
-const port = process.env.PORT;
+const port = process.env.PORT || 3030;
 
 app.use(express.json());
 app.use(cors({ origin: true, methods: "GET,HEAD,POST,PUT,PATCH,DELETE", credentials: true }));
@@ -51,10 +51,10 @@ const removeUser = async (socket) => {
 const addUser = (userId, socketId) => onlineUsers.set(userId, socketId);
 
 io.on('connection', (socket) => {
-    console.log('socket connected')
+    // console.log('socket connected');
     
     socket.on('userOnline', async (id) => {
-        console.log(`addedUser => ${id}`);
+        // console.log(`addedUser => ${id}`);
         addUser(id, socket.id);
         io.emit('updateAccount', {_id: id, lastSeen: 'online'});
         await Users.findByIdAndUpdate(id, { lastSeen: 'online' });
@@ -70,7 +70,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect', async () => {
-        console.log('socket disconnected');
+        // console.log('socket disconnected');
         const { userId, date } = await removeUser(socket.id);
         if(userId) {
             io.emit('updateAccount', {

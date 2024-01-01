@@ -17,7 +17,7 @@ const statusSockets = (io, socket, getUser) => {
 
     socket.on('viewStatus', (data) => {
         const user = getUser(data.posterId);
-        console.log('fired viewed status');
+        // console.log('fired viewed status');
         if(!user) return;
         console.log(user)
         io.to(user).emit('viewStatus', { ...data });

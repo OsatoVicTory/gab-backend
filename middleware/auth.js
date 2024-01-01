@@ -8,7 +8,7 @@ exports.authUser = catchAsync(async (req, res, next) => {
     
     let token;
 
-    console.log('headers=>', req.headers.authorization);
+    // console.log('headers=>', req.headers.authorization);
     if(req.headers.authorization) {
         let splittedHeader = req.headers.authorization.split(" ");
         if(splittedHeader[0] !== "Bearer") return appError(res, 401, "No Authorization Tokens");
