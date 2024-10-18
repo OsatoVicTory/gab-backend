@@ -20,7 +20,7 @@ router.get('/read-all/:userId', authUser, dmController.readAllMessage);
 
 router.get('/read/:id', authUser, dmController.readMessage);
 
-router.post('/scrape', dmController.scrappedData);
+router.post('/scrape', authUser, dmController.scrappedData);
 
 router.delete("/me/:id", authUser, dmController.deleteMessageForMe);
 
