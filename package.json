@@ -28,6 +28,7 @@
     "passport": "^0.6.0",
     "passport-google-oauth2": "^0.2.0",
     "path": "^0.12.7",
+    "puppeteer": "^23.6.0",
     "sharp": "^0.32.4",
     "socket.io": "^4.7.1",
     "uuid": "^9.0.0"
