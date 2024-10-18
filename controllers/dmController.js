@@ -5,7 +5,7 @@ const Users = require('../models/users');
 const { uploadMany, deleteUploadedFile } = require("../utils/upload");
 // const cloudinary = require("../routes/cloudinary");
 const { parallelDMClearing, parallelDeleteDMForMe } = require('../utils/delete');
-const axios = require('axios');
+const puppeteer = require("puppeteer");
 const cheerio = require('cheerio');
 
 exports.test = catchAsync(async (req, res) => {
@@ -21,16 +21,33 @@ exports.test = catchAsync(async (req, res) => {
 
 exports.scrappedData = catchAsync(async (req, res) => {
     const { url } = req.body;
-    const resp = await axios.get(url);
-    const html = resp.data;
+    const browser = await puppeteer.launch({
+        headless: true,
+    });
+
+    // Open a new page
+    const page = await browser.newPage();
+
+    await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Firefox/91.0");
+
+    await page.goto(url, {
+        waitUntil: "domcontentloaded"
+    });
+
+    const html = await page.content();
     const $ = cheerio.load(html);
+    const response = { title: url, pTag: url, img: url, site: url }
+      
+    const title = $('meta[property="og:title"]').attr('content');
+    response.title = title || url;
+    response.pTag = $('meta[property="og:description"]').attr('content') || url;
+    response.img = $('meta[property="og:image"]').attr('content');
+    response.site = $('meta[property="og:url"]').attr('content') || url;
+    response.FOUND_DATA = title ? true : false;
 
-    const title = $('meta[property="og:title"]').attr('content') || url;
-    const pTag = $('meta[property="og:description"]').attr('content') || url;
-    const img = $('meta[property="og:image"]').attr('content');
-    const site = $('meta[property="og:url"]').attr('content') || url;
-
-    res.status(200).json({ title, pTag, img, site });
+    await browser.close();
+    
+    res.status(200).json(response);
 });
 
 exports.sendMessage = catchAsync(async (req, res) => {
