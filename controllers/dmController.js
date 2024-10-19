@@ -26,6 +26,7 @@ exports.scrappedData = catchAsync(async (req, res) => {
     const { url } = req.body;
     const browser = await puppeteer.launch({
         headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
 
     // Open a new page
@@ -55,12 +56,12 @@ exports.scrappedData = catchAsync(async (req, res) => {
         "Upgrade-Insecure-Requests": "1",
     });
 
-    // page.on('response', (response) => {
-    //     console.log('Response received:', response.url(), response.status());
-    // });
+    await page.evaluateOnNewDocument(() => {
+        Object.defineProperty(navigator, 'webdriver', { get: () => false });
+    });
 
     await page.goto(url, {
-        waitUntil: 'domcontentloaded'
+        waitUntil: 'networkidle2', timeout: 40000
     });
     
     function parseImgUrl(URL) {
@@ -70,6 +71,7 @@ exports.scrappedData = catchAsync(async (req, res) => {
         return url+URL;
     };
 
+    await page.evaluate(() => window.scrollBy(0, window.innerHeight));
     const html = await page.content();
     const $ = cheerio.load(html);
     const response = { title: url, pTag: url, img: url, site: url };
