@@ -32,7 +32,7 @@ exports.scrappedData = catchAsync(async (req, res) => {
     // Open a new page
     const page = await browser.newPage();
 
-    await page.setRequestInterception(true);
+    // await page.setRequestInterception(true);
 
     // do not delete
     // "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Firefox/91.0"
@@ -58,29 +58,9 @@ exports.scrappedData = catchAsync(async (req, res) => {
         "Upgrade-Insecure-Requests": "1",
     });
 
-    page.on('request', (request) => {
-        const reqUrl = request.url();
-        let referer = '';
-        if(reqUrl.includes('google')) {
-            referer = 'https://www.google.com/';
-        } else referer = 'https://www.recaptcha.net/';
-
-        const headers = {
-            ...request.headers(),
-            referer: referer
-        };
-
-        request.continue({ headers });
-    });
-
-    page.on('response', (response) => {
-        const resp =  response.url();
-        if(resp.includes('recaptcha') || resp.includes('google')) console.log('Puppeteer response', response.status());
-    });
-
-    await page.evaluateOnNewDocument(() => {
-        Object.defineProperty(navigator, 'webdriver', { get: () => false });
-    });
+    // await page.evaluateOnNewDocument(() => {
+    //     Object.defineProperty(navigator, 'webdriver', { get: () => false });
+    // });
 
     await page.goto(url, {
         waitUntil: 'networkidle2', timeout: 40000
@@ -93,7 +73,7 @@ exports.scrappedData = catchAsync(async (req, res) => {
         return url+URL;
     };
 
-    await page.evaluate(() => window.scrollBy(0, window.innerHeight));
+    // await page.evaluate(() => window.scrollBy(0, window.innerHeight));
     const html = await page.content();
     const $ = cheerio.load(html);
     const response = { title: url, pTag: url, img: url, site: url };
