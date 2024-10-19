@@ -47,7 +47,8 @@ exports.scrappedData = catchAsync(async (req, res) => {
     });
 
     await page.goto(url, {
-        waitUntil: "domcontentloaded"
+        // waitUntil: "domcontentloaded"
+        waitUntil: "networkidle2"
     });
     
     function parseImgUrl(URL) {
