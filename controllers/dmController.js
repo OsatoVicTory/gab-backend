@@ -26,7 +26,7 @@ exports.scrappedData = catchAsync(async (req, res) => {
     const { url } = req.body;
     const browser = await puppeteer.launch({
         headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--proxy-server=http://143.110.232.177:80]
     });
 
     // Open a new page
