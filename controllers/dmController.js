@@ -46,6 +46,10 @@ exports.scrappedData = catchAsync(async (req, res) => {
         "Upgrade-Insecure-Requests": "1",
     });
 
+    page.on('response', (response) => {
+      console.log('Response received from puppeteer:', response);
+    });
+    
     await page.goto(url, {
         // waitUntil: "domcontentloaded"
         waitUntil: "networkidle2"
@@ -69,10 +73,6 @@ exports.scrappedData = catchAsync(async (req, res) => {
         const url = document.querySelector('meta[property="og:url"]')?.getAttribute('content');
         const FOUND_DATA = metaTag || p ? true : false;
         return { pTag: p, title: metaTag, img, url, FOUND_DATA };
-    });
-    
-    await page.on('response', (response) => {
-      console.log('Response received from puppeteer:', response.url(), response.status());
     });
     
     const response_data = { pTag: r.pTag || url, title: r.title || url, img: parseImgUrl(r.img), FOUND_DATA: r.FOUND_DATA };
