@@ -6,7 +6,7 @@ const { uploadMany, deleteUploadedFile } = require("../utils/upload");
 // const cloudinary = require("../routes/cloudinary");
 const { parallelDMClearing, parallelDeleteDMForMe } = require('../utils/delete');
 const puppeteer = require("puppeteer");
-const cheerio = require('cheerio');
+// const cheerio = require('cheerio');
 
 exports.test = catchAsync(async (req, res) => {
     const msgs = await DirectMessages.find();
@@ -57,21 +57,32 @@ exports.scrappedData = catchAsync(async (req, res) => {
         return url+URL;
     };
 
-    const html = await page.content();
-    const $ = cheerio.load(html);
+    // const html = await page.content();
+    // const $ = cheerio.load(html);
     const response = { title: url, pTag: url, img: url, site: url };
+
+    const r = await page.evaluate(() => {
+        const metaTag = document.querySelector('meta[property="og:title"]')?.getAttribute('content');
+        const p = document.querySelector('meta[property="og:description"]')?.getAttribute('content');
+        const img = document.querySelector('meta[property="og:image"]')?.getAttribute('content');
+        const url = document.querySelector('meta[property="og:url"]')?.getAttribute('content');
+        const FOUND_DATA = metaTag || p ? true : false;
+        return { pTag: p, title: metaTag, img, url, FOUND_DATA };
+    });
+    
+    const response_data = { pTag: r.pTag || url, title: r.title || url, img: parseImgUrl(r.img), FOUND_DATA: r.FOUND_DATA };
         
-    const title = $('meta[property="og:title"]').attr('content');
-    const pTag = $('meta[property="og:description"]').attr('content');
-    response.title = title || url;
-    response.pTag = pTag || url;
-    response.img = parseImgUrl($('meta[property="og:image"]').attr('content'));
-    response.site = $('meta[property="og:url"]').attr('content') || url;
-    response.FOUND_DATA = title || pTag ? true : false;
+    // const title = $('meta[property="og:title"]').attr('content');
+    // const pTag = $('meta[property="og:description"]').attr('content');
+    // response.title = title || url;
+    // response.pTag = pTag || url;
+    // response.img = parseImgUrl($('meta[property="og:image"]').attr('content'));
+    // response.site = $('meta[property="og:url"]').attr('content') || url;
+    // response.FOUND_DATA = title || pTag ? true : false;
 
     await browser.close();
     
-    res.status(200).json(response);
+    res.status(200).json(response_data);
 });
 
 exports.sendMessage = catchAsync(async (req, res) => {
