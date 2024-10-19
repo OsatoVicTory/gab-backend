@@ -37,23 +37,23 @@ exports.scrappedData = catchAsync(async (req, res) => {
     // new
     // "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
 
-    // await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Firefox/91.0");
-    // await page.setExtraHTTPHeaders({
-    //     'accept-language': 'en-US,en;q=0.9',
-    //     'referer': 'https://www.recaptcha.net/',
-    //     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7", 
-    //     "Accept-Encoding": "gzip, deflate, br, zstd", 
-    //     "Connection": "keep-alive",
-    //     "Accept-Language": "en-US,en;q=0.9,ru;q=0.8", 
-    //     "Sec-Ch-Ua": "\"Chromium\";v=\"130\", \"Google Chrome\";v=\"130\", \"Not?A_Brand\";v=\"99\"", 
-    //     "Sec-Ch-Ua-Mobile": "?0", 
-    //     "Sec-Ch-Ua-Platform": "\"Windows\"", 
-    //     "Sec-Fetch-Dest": "document", 
-    //     "Sec-Fetch-Mode": "navigate", 
-    //     "Sec-Fetch-Site": "cross-site", 
-    //     "Sec-Fetch-User": "?1", 
-    //     "Upgrade-Insecure-Requests": "1",
-    // });
+    await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Firefox/91.0");
+    await page.setExtraHTTPHeaders({
+        'accept-language': 'en-US,en;q=0.9',
+        'referer': 'https://www.recaptcha.net/',
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7", 
+        "Accept-Encoding": "gzip, deflate, br, zstd", 
+        "Connection": "keep-alive",
+        "Accept-Language": "en-US,en;q=0.9,ru;q=0.8", 
+        "Sec-Ch-Ua": "\"Chromium\";v=\"130\", \"Google Chrome\";v=\"130\", \"Not?A_Brand\";v=\"99\"", 
+        "Sec-Ch-Ua-Mobile": "?0", 
+        "Sec-Ch-Ua-Platform": "\"Windows\"", 
+        "Sec-Fetch-Dest": "document", 
+        "Sec-Fetch-Mode": "navigate", 
+        "Sec-Fetch-Site": "cross-site", 
+        "Sec-Fetch-User": "?1", 
+        "Upgrade-Insecure-Requests": "1",
+    });
 
     // page.on('response', (response) => {
     //     console.log('Response received:', response.url(), response.status());
