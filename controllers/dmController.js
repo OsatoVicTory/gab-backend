@@ -5,6 +5,7 @@ const Users = require('../models/users');
 const { uploadMany, deleteUploadedFile } = require("../utils/upload");
 // const cloudinary = require("../routes/cloudinary");
 const { parallelDMClearing, parallelDeleteDMForMe } = require('../utils/delete');
+const puppeteer = require('puppeteer');
 
 exports.test = catchAsync(async (req, res) => {
     const msgs = await DirectMessages.find();
