@@ -25,7 +25,7 @@ exports.test = catchAsync(async (req, res) => {
 exports.scrappedData = catchAsync(async (req, res) => {
     const { url, timeout } = req.body;
     const browser = await puppeteer.launch({
-        headless: true,
+        headless: false,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
 
@@ -57,6 +57,30 @@ exports.scrappedData = catchAsync(async (req, res) => {
         "Sec-Fetch-User": "?1", 
         "Upgrade-Insecure-Requests": "1",
     });
+
+    // page.on('request', (request) => {
+    //     const reqUrl = request.url();
+    //     let referer = '';
+    //     if(reqUrl.includes('google')) {
+    //         referer = 'https://www.google.com/';
+    //     } else referer = 'https://www.recaptcha.net/';
+
+    //     const headers = {
+    //         ...request.headers(),
+    //         referer: referer
+    //     };
+
+    //     request.continue({ headers });
+    // });
+
+    // page.on('response', (response) => {
+    //     const resp =  response.url();
+    //     if(resp.includes('recaptcha') || resp.includes('google')) console.log('Puppeteer response', response.status());
+    // });
+    
+    // await page.evaluateOnNewDocument(() => {
+    //     Object.defineProperty(navigator, 'webdriver', { get: () => false });
+    // });
 
     await Promise.all([
         page.goto(url, { waitUntil: 'domcontentloaded', timeout: timeout || 60000 }),
