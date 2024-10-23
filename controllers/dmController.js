@@ -23,7 +23,7 @@ exports.test = catchAsync(async (req, res) => {
 });
 
 exports.scrappedData = catchAsync(async (req, res) => {
-    const { url } = req.body;
+    const { url, timeout } = req.body;
     const browser = await puppeteer.launch({
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -58,9 +58,10 @@ exports.scrappedData = catchAsync(async (req, res) => {
         "Upgrade-Insecure-Requests": "1",
     });
 
-    await page.goto(url, {
-        waitUntil: 'domcontentloaded', timeout: 40000
-    });
+    await Promise.all([
+        page.goto(url, { waitUntil: 'domcontentloaded', timeout: timeout || 60000 }),
+        page.waitForSelector('meta[property="og:description"]', { timeout: timeout || 60000 })
+    ]);
     
     function parseImgUrl(URL) {
         if(!URL) return URL;
