@@ -5,11 +5,6 @@ const Users = require('../models/users');
 const { uploadMany, deleteUploadedFile } = require("../utils/upload");
 // const cloudinary = require("../routes/cloudinary");
 const { parallelDMClearing, parallelDeleteDMForMe } = require('../utils/delete');
-const puppeteer = require("puppeteer-extra");
-const cheerio = require('cheerio');
-const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-
-puppeteer.use(StealthPlugin());
 
 exports.test = catchAsync(async (req, res) => {
     const msgs = await DirectMessages.find();
@@ -20,107 +15,6 @@ exports.test = catchAsync(async (req, res) => {
     }
     await Users.findByIdAndUpdate(req.user.id, { contacts: [] });
     res.status(200).json({message: 'success'});
-});
-
-exports.scrappedData = catchAsync(async (req, res) => {
-    const { url, timeout } = req.body;
-    const browser = await puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
-
-    // Open a new page
-    const page = await browser.newPage();
-
-    // await page.setRequestInterception(true);
-
-    // do not delete
-    // "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Firefox/91.0"
-
-    // new
-    // "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
-
-    await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Firefox/91.0");
-    await page.setExtraHTTPHeaders({
-        'accept-language': 'en-US,en;q=0.9',
-        'referer': 'https://www.recaptcha.net/',
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7", 
-        "Accept-Encoding": "gzip, deflate, br, zstd", 
-        "Connection": "keep-alive",
-        "Accept-Language": "en-US,en;q=0.9,ru;q=0.8", 
-        "Sec-Ch-Ua": "\"Chromium\";v=\"130\", \"Google Chrome\";v=\"130\", \"Not?A_Brand\";v=\"99\"", 
-        "Sec-Ch-Ua-Mobile": "?0", 
-        "Sec-Ch-Ua-Platform": "\"Windows\"", 
-        "Sec-Fetch-Dest": "document", 
-        "Sec-Fetch-Mode": "navigate", 
-        "Sec-Fetch-Site": "cross-site", 
-        "Sec-Fetch-User": "?1", 
-        "Upgrade-Insecure-Requests": "1",
-    });
-
-    // page.on('request', (request) => {
-    //     const reqUrl = request.url();
-    //     let referer = '';
-    //     if(reqUrl.includes('google')) {
-    //         referer = 'https://www.google.com/';
-    //     } else referer = 'https://www.recaptcha.net/';
-
-    //     const headers = {
-    //         ...request.headers(),
-    //         referer: referer
-    //     };
-
-    //     request.continue({ headers });
-    // });
-
-    // page.on('response', (response) => {
-    //     const resp =  response.url();
-    //     if(resp.includes('recaptcha') || resp.includes('google')) console.log('Puppeteer response', response.status());
-    // });
-    
-    // await page.evaluateOnNewDocument(() => {
-    //     Object.defineProperty(navigator, 'webdriver', { get: () => false });
-    // });
-
-    await Promise.all([
-        page.goto(url, { waitUntil: 'domcontentloaded', timeout: timeout || 60000 }),
-        page.waitForSelector('meta[property="og:description"]', { timeout: timeout || 60000 })
-    ]);
-    
-    function parseImgUrl(URL) {
-        if(!URL) return URL;
-        if(['https', 'www'].find(site => URL.startsWith(site))) return URL;
-        if(URL.startsWith('//')) return `https:${URL}`;
-        return url+URL;
-    };
-
-    // await page.evaluate(() => window.scrollBy(0, window.innerHeight));
-    const html = await page.content();
-    const $ = cheerio.load(html);
-    const response = { title: url, pTag: url, img: url, site: url };
-
-    // const r = await page.evaluate(() => {
-    //     const metaTag = document.querySelector('meta[property="og:title"]')?.getAttribute('content');
-    //     const p = document.querySelector('meta[property="og:description"]')?.getAttribute('content');
-    //     const img = document.querySelector('meta[property="og:image"]')?.getAttribute('content');
-    //     const url = document.querySelector('meta[property="og:url"]')?.getAttribute('content');
-    //     const FOUND_DATA = metaTag || p ? true : false;
-    //     return { pTag: p, title: metaTag, img, url, FOUND_DATA };
-    // });
-    
-    // const response_data = { pTag: r.pTag || url, title: r.title || url, img: parseImgUrl(r.img), FOUND_DATA: r.FOUND_DATA };
-        
-    const title = $('meta[property="og:title"]').attr('content');
-    const pTag = $('meta[property="og:description"]').attr('content');
-    response.title = title || url;
-    response.pTag = pTag || url;
-    response.img = parseImgUrl($('meta[property="og:image"]').attr('content'));
-    response.site = $('meta[property="og:url"]').attr('content') || url;
-    response.FOUND_DATA = title || pTag ? true : false;
-
-    await browser.close();
-    
-    res.status(200).json(response);
 });
 
 exports.sendMessage = catchAsync(async (req, res) => {
