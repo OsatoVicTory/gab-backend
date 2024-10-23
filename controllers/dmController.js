@@ -59,7 +59,7 @@ exports.scrappedData = catchAsync(async (req, res) => {
     });
 
     await page.goto(url, {
-        waitUntil: 'networkidle2', timeout: 40000
+        waitUntil: 'domcontentloaded', timeout: 40000
     });
     
     function parseImgUrl(URL) {
