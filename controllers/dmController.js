@@ -70,7 +70,7 @@ exports.scrappedData = catchAsync(async (req, res) => {
         return url+URL;
     };
 
-    await page.evaluate(() => window.scrollBy(0, window.innerHeight));
+    // await page.evaluate(() => window.scrollBy(0, window.innerHeight));
     const html = await page.content();
     const $ = cheerio.load(html);
     const response = { title: url, pTag: url, img: url, site: url };
