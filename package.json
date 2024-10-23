@@ -13,7 +13,6 @@
     "axios": "^1.6.1",
     "bcrypt": "^5.1.0",
     "blurhash": "^2.0.5",
-    "cheerio": "^1.0.0-rc.12",
     "cloudinary": "^1.39.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -28,9 +27,6 @@
     "passport": "^0.6.0",
     "passport-google-oauth2": "^0.2.0",
     "path": "^0.12.7",
-    "puppeteer": "^23.6.0",
-    "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2",
     "sharp": "^0.32.4",
     "socket.io": "^4.7.1",
     "uuid": "^9.0.0"
